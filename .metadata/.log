@@ -34,3 +34,31 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY com.codetogether.hq.eclipse 1 0 2025-03-11 20:01:36.430
 !MESSAGE Authorization Server started successfuly
+
+!ENTRY org.eclipse.cdt.core 1 0 2025-03-11 20:07:39.158
+!MESSAGE Indexed 'f401re-semaphores' (20 sources, 82 headers) in 1.57 sec: 4,763 declarations; 22,636 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0073%)
+!SESSION 2025-03-12 22:08:44.507 -----------------------------------------------
+eclipse.buildId=Version 1.17.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_PE
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2025-03-12 22:08:52.981
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2025-03-12 22:08:52.982
+!MESSAGE Log4j2 initialized with config file C:\Users\User\Documents\stm32-freertos_github\stm32-freertos\.metadata\.log4j2.xml
+
+!ENTRY org.eclipse.egit.ui 2 0 2025-03-12 22:08:55.397
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\User'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2025-03-12 22:08:57.278
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY com.codetogether.hq.eclipse 1 0 2025-03-12 22:09:04.064
+!MESSAGE Authorization Server started successfuly
