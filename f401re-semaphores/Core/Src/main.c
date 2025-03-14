@@ -22,7 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "event_groups.h"
+#include "stdio.h"
+#include "string.h"
+#include "freertos_defines.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +46,12 @@
 UART_HandleTypeDef huart2;
 
 /* Definitions for defaultTask */
-
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
 
 TaskHandle_t handle_task_main;
@@ -52,10 +59,7 @@ TaskHandle_t handle_task_green;
 TaskHandle_t handle_task_blue;
 TaskHandle_t handle_task_red;
 
-void task_main(void *params);
-void task_green(void *params);
-void task_blue(void *params);
-void task_red(void *params);
+SemaphoreHandle_t handle_semap_sem1;
 
 /* USER CODE END PV */
 
@@ -63,6 +67,7 @@ void task_red(void *params);
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+void task_main(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -116,6 +121,10 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
+  handle_semap_sem1 = NULL;
+  handle_semap_sem1 = xSemaphoreCreateBinary();
+  assert_param(handle_semap_sem1 != NULL);
+
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -128,6 +137,10 @@ int main(void)
 
   /* Create the thread(s) */
   /* creation of defaultTask */
+  //defaultTaskHandle = osThreadNew(task_main, NULL, &defaultTask_attributes);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
   status = xTaskCreate(task_main, "Main task", 256, NULL, osPriorityNormal, &handle_task_main);
   assert_param(status == pdPASS);
 
@@ -139,10 +152,6 @@ int main(void)
 
   status = xTaskCreate(task_red, "Blinking red led task", 256, NULL, osPriorityNormal, &handle_task_red);
   assert_param(status == pdPASS);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -262,7 +271,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED_GREEN_Pin|LED_BLUE_Pin|LED_RED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -270,18 +279,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : LED_GREEN_Pin LED_BLUE_Pin LED_RED_Pin */
+  GPIO_InitStruct.Pin = LED_GREEN_Pin|LED_BLUE_Pin|LED_RED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
+
 
 /* USER CODE END 4 */
 
@@ -296,18 +306,9 @@ __weak void task_main(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+
   /* USER CODE END 5 */
 }
-
-__weak void task_main(void *params);
-__weak void task_green(void *params);
-__weak void task_blue(void *params);
-__weak void task_red(void *params);
-
 
 /**
   * @brief  Period elapsed callback in non blocking mode
@@ -358,6 +359,17 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+
+	// Guardar error en una variable global o log (opcional)
+	static uint32_t last_assert_line = 0;
+	last_assert_line = line;
+    printf("⚠️  Assert Fallido: Archivo %s, Línea %lu\n", file, line);
+
+    // Enviar el mensaje por UART (opcional, si tienes una interfaz serial)
+    char msg[100];
+    snprintf(msg, sizeof(msg), "ASSERT FAILED: %s, LINE: %lu\n", file, line);
+    HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
+
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
