@@ -27,6 +27,7 @@ extern TaskHandle_t handle_task_blue;
 extern TaskHandle_t handle_task_red;
 
 extern SemaphoreHandle_t handle_semap_sem1;
+extern SemaphoreHandle_t handle_semap_sem2;
 
 /*Functions*/
 void task_green(void *params);

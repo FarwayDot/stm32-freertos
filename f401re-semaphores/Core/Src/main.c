@@ -60,6 +60,7 @@ TaskHandle_t handle_task_blue;
 TaskHandle_t handle_task_red;
 
 SemaphoreHandle_t handle_semap_sem1;
+SemaphoreHandle_t handle_semap_sem2;
 
 /* USER CODE END PV */
 
@@ -123,7 +124,10 @@ int main(void)
   /* add semaphores, ... */
   handle_semap_sem1 = NULL;
   handle_semap_sem1 = xSemaphoreCreateBinary();
-  assert_param(handle_semap_sem1 != NULL);
+  xSemaphoreGive(handle_semap_sem1);
+  //assert_param(handle_semap_sem1 != NULL);
+  handle_semap_sem2 = NULL;
+  handle_semap_sem2 = xSemaphoreCreateBinary();
 
   /* USER CODE END RTOS_SEMAPHORES */
 
@@ -141,17 +145,17 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  status = xTaskCreate(task_main, "Main task", 256, NULL, osPriorityNormal, &handle_task_main);
-  assert_param(status == pdPASS);
+  status = xTaskCreate(task_main, "Main task", 64, NULL, osPriorityNormal, &handle_task_main);
+  //assert_param(status == pdPASS);
 
-  status = xTaskCreate(task_green, "Blinking green led task", 256, NULL, osPriorityNormal, &handle_task_green);
-  assert_param(status == pdPASS);
+  status = xTaskCreate(task_green, "Blinking green led task", 128, NULL, osPriorityNormal, &handle_task_green);
+  //assert_param(status == pdPASS);
 
-  status = xTaskCreate(task_blue, "Blinking blue led task", 256, NULL, osPriorityNormal, &handle_task_blue);
-  assert_param(status == pdPASS);
+  status = xTaskCreate(task_blue, "Blinking blue led task", 128, NULL, osPriorityNormal, &handle_task_blue);
+  //assert_param(status == pdPASS);
 
-  status = xTaskCreate(task_red, "Blinking red led task", 256, NULL, osPriorityNormal, &handle_task_red);
-  assert_param(status == pdPASS);
+  status = xTaskCreate(task_red, "Blinking red led task", 64, NULL, osPriorityNormal, &handle_task_red);
+  //assert_param(status == pdPASS);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */

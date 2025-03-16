@@ -1771,6 +1771,7 @@ IEclipsePreferences#org-eclipse-jdt-ui {
 		'java_operator=216,216,216'
 		'java_single_line_comment=199,221,12'
 		'java_string=255,198,0'
+		'javadocElementsStyling.darkModeDefaultColors=true'
 		'matchingBracketsColor=244,245,246'
 		'pf_coloring_argument=141,203,226'
 		'pf_coloring_assignment=216,216,216'
@@ -2231,6 +2232,7 @@ IEclipsePreferences#org-eclipse-ui-workbench {
 		'org.eclipse.ui.editors.foregroundColor=255,255,255'
 		'org.eclipse.ui.editors.lineNumberRulerColor=120,135,145'
 		'org.eclipse.ui.editors.printMarginColor=62,70,76'
+		'org.eclipse.ui.editors.stickyLinesSeparatorColor=18,21,22'
 		'org.eclipse.ui.showkeys.backgroundColor=182,190,195'
 }
 IEclipsePreferences#org-eclipse-wst-css-ui {
