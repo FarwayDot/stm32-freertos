@@ -15,6 +15,9 @@
 
 /*Defines*/
 
+#ifndef HIGH_PRIORITY_EXAMPLE
+#define HIGH_PRIORITY_EXAMPLE
+#endif
 
 /*Structures and enums*/
 

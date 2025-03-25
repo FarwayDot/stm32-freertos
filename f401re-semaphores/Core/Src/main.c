@@ -145,16 +145,30 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+
   status = xTaskCreate(task_main, "Main task", 64, NULL, osPriorityNormal, &handle_task_main);
   //assert_param(status == pdPASS);
 
+#ifdef HIGH_PRIORITY_EXAMPLE
+  status = xTaskCreate(task_green, "Blinking green led task", 128, NULL, osPriorityHigh, &handle_task_green);
+
+  //assert_param(status == pdPASS);
+#else
   status = xTaskCreate(task_green, "Blinking green led task", 128, NULL, osPriorityNormal, &handle_task_green);
-  //assert_param(status == pdPASS);
+#endif
 
+#ifdef HIGH_PRIORITY_EXAMPLE
+  status = xTaskCreate(task_blue, "Blinking blue led task", 128, NULL, osPriorityNormal4, &handle_task_blue);
+#else
   status = xTaskCreate(task_blue, "Blinking blue led task", 128, NULL, osPriorityNormal, &handle_task_blue);
-  //assert_param(status == pdPASS);
+#endif
 
+#ifdef HIGH_PRIORITY_EXAMPLE
   status = xTaskCreate(task_red, "Blinking red led task", 64, NULL, osPriorityNormal, &handle_task_red);
+#else
+  status = xTaskCreate(task_red, "Blinking red led task", 64, NULL, osPriorityNormal, &handle_task_red);
+#endif
+
   //assert_param(status == pdPASS);
   /* USER CODE END RTOS_THREADS */
 

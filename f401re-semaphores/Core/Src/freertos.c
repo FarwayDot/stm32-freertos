@@ -38,7 +38,7 @@
 //#define PRUEBA_YIELD
 //#define PRUEBA_SEMAP_2
 //#define PRUEBA_POLLING
-#define PRUEBA_TIME_BOUND
+//#define PRUEBA_TIME_BOUND
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -53,7 +53,8 @@ volatile uint32_t flag = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+static void lookBusy( uint32_t numIterations );
+void Blinking_led(GPIO_TypeDef *gpio, uint8_t pin);
 /* USER CODE END FunctionPrototypes */
 
 /* Private application code --------------------------------------------------*/
@@ -133,12 +134,27 @@ void task_green(void *params)
 		/**/
 
 #endif
+#ifdef HIGH_PRIORITY_EXAMPLE
+		if(xSemaphoreTake(handle_semap_sem1, pdMS_TO_TICKS(200))== pdPASS)
+		{
+			HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
+			Blinking_led(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
+			xSemaphoreGive(handle_semap_sem1);
+		}
+		else
+		{
+			HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
+		}
+
+		osDelay((rand()%(30-5+1))+5);
+
+#endif
 	}
 }
 
 void task_blue(void *params)
 {
-	uint8_t cont = 0;
+	uint32_t cont = 0;
 	for(;;)
 	{
 #ifdef PRUEBA_SEMAP_2
@@ -205,6 +221,14 @@ void task_blue(void *params)
         	HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
         }
 #endif
+
+#ifdef HIGH_PRIORITY_EXAMPLE
+
+		osDelay(((rand()%(25-10+1))+10));
+		cont = (rand()%(750000-250000+1))+250000;
+		lookBusy(cont);
+
+#endif
 	}
 }
 
@@ -218,10 +242,42 @@ void task_red(void *params)
 		vTaskDelete(handle_task_red);
 #endif
 
+#ifdef HIGH_PRIORITY_EXAMPLE
+	if(xSemaphoreTake(handle_semap_sem1, pdMS_TO_TICKS(200))==pdPASS)
+	{
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
+		Blinking_led(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
+		xSemaphoreGive(handle_semap_sem1);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
+	}
+#endif
+
 	}
 }
 
 
+void Blinking_led(GPIO_TypeDef *gpio, uint8_t pin)
+{
+	for(uint8_t i=1; i<=2; i++)
+	{
+		HAL_GPIO_WritePin(gpio, pin, GPIO_PIN_SET);
+		osDelay(43);
+		HAL_GPIO_WritePin(gpio, pin, GPIO_PIN_RESET);
+		osDelay(43);
+	}
+}
+
+static void lookBusy( uint32_t numIterations )
+{
+	__attribute__((unused))volatile uint32_t dontCare = 0;
+	for(int i = 0; i < numIterations; i++)
+	{
+		dontCare = i % 4;
+	}
+}
 
 /* USER CODE END Application */
 
